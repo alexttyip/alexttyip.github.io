@@ -1,5 +1,8 @@
-const REDIRECT_URI = "http://localhost:5173" as const;
-const CLIENT_ID = "0fdaae456f1f4de39b3e9cca593980d1" as const
+const CLIENT_ID = "0fdaae456f1f4de39b3e9cca593980d1" as const;
+const REDIRECT_URI =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:5173"
+    : "https://alexttyip.github.io";
 
 function generateRandomString(length: number) {
   let text = "";
