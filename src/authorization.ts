@@ -1,4 +1,5 @@
 const REDIRECT_URI = "http://localhost:5173" as const;
+const CLIENT_ID = "0fdaae456f1f4de39b3e9cca593980d1" as const
 
 function generateRandomString(length: number) {
   let text = "";
@@ -40,7 +41,7 @@ export function requestAuth() {
 
     const args = new URLSearchParams({
       response_type: "code",
-      client_id: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
+      client_id: CLIENT_ID,
       scope: scope,
       redirect_uri: REDIRECT_URI,
       state: state,
@@ -63,7 +64,7 @@ async function requestToken(code: string) {
     grant_type: "authorization_code",
     code: code,
     redirect_uri: REDIRECT_URI,
-    client_id: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
+    client_id: CLIENT_ID,
     code_verifier: codeVerifier,
   });
 
