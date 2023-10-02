@@ -15,15 +15,19 @@ const TrackComponent = ({
   isCurrent,
   channel,
 }: TrackComponentProps) => {
-  const color = useColor(imageUrl, "rgbString", { crossOrigin: "Anonymous" });
+  const { data = channel } = useColor(imageUrl, "rgbString", {
+    crossOrigin: "Anonymous",
+  });
 
-  const colorObj = Color(color.data).lighten(0.2).fade(0.5);
+  const colorObj = isCurrent
+    ? Color(channel)
+    : Color(data).lighten(0.2).fade(0.5);
 
   return (
     <div
       className={`trackContainer ${isCurrent && "currentlyPlaying"}`}
       style={{
-        background: isCurrent ? channel : colorObj.hexa(),
+        background: colorObj.hexa(),
       }}
     >
       <div className="trackInnerContainer">
