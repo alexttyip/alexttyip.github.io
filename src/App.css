@@ -1,0 +1,19 @@
+#root {
+  flex: 1;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  margin: auto;
+}
+
+.queue {
+  height: 100vh;
+}
+
+.channelSelector {
+  display: flex;
+  gap: 1em;
+}
