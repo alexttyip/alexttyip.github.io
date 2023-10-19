@@ -13,28 +13,28 @@ const getFullTime = (time: string) => `${PARTY_DATE}T${time}:00+01:00`;
 const schedule = [
   {
     title: "🎉 Let the party begin 🎉",
-    startTime: getFullTime("00:08"),
-    endTime: getFullTime("00:09"),
+    startTime: getFullTime("00:23"),
+    endTime: getFullTime("00:24"),
   },
   {
     title: "🥘 Food! 🧆",
-    startTime: getFullTime("00:09"),
-    endTime: getFullTime("00:13"),
+    startTime: getFullTime("00:24"),
+    endTime: getFullTime("00:25"),
   },
   {
     title: "🎤 ¡Alt-0161¡ 🎸",
-    startTime: getFullTime("00:14"),
-    endTime: getFullTime("00:15"),
+    startTime: getFullTime("00:25"),
+    endTime: getFullTime("00:26"),
   },
   {
     title: "🎧 Silent disco 🎧",
-    startTime: getFullTime("00:15"),
-    endTime: getFullTime("00:16"),
+    startTime: getFullTime("00:26"),
+    endTime: getFullTime("00:30"),
   },
   {
     title: "🍕 Pizza! 🍕",
-    startTime: `${PARTY_DATE} 23:50`,
-    endTime: `${PARTY_DATE} 23:50`,
+    startTime: getFullTime("00:30"),
+    endTime: getFullTime("00:59")
   },
 ];
 
@@ -56,10 +56,10 @@ function TimelineComponent() {
 
         return time.isBefore(endTime) ? (
           <div
-            className={`trackContainer ${isCurrent && "currentlyPlaying"}`}
+            className={`eventContainer ${isCurrent && "currentlyHappening"}`}
             style={{ background: isCurrent ? "#F9DC62" : "none" }}
           >
-            <div className="trackInnerContainer">
+            <div className="eventInnerContainer">
               <h1 style={{ color: isCurrent ? "black" : "white" }}>{title}</h1>
               <h2 style={{ color: isCurrent ? "black" : "white" }}>
                 {`${dayjs(startTime).format("HH:mm")} aka ${dayjs(
@@ -70,6 +70,8 @@ function TimelineComponent() {
           </div>
         ) : null;
       })}
+
+      <div className="easterEgg">{time.unix()}</div>
     </div>
   );
 }

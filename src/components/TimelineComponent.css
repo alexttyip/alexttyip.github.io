@@ -2,16 +2,16 @@
   height: 100vh;
 }
 
-.trackContainer {
+.eventContainer {
   height: 28%;
   display: flex;
 }
 
-.currentlyPlaying {
+.currentlyHappening {
   height: 44%;
 }
 
-.trackInnerContainer {
+.eventInnerContainer {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -40,4 +40,13 @@ h2 {
 
 .currentlyPlaying h2 {
   font-size: 2em;
+}
+
+.easterEgg {
+  position: absolute;
+  left:0;
+  bottom:0;
+
+  color: orange;
+
 }
