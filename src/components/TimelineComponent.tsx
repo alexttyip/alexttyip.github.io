@@ -13,28 +13,28 @@ const getFullTime = (time: string) => `${PARTY_DATE}T${time}:00+01:00`;
 const schedule = [
   {
     title: "🎉 Let the party begin 🎉",
-    startTime: getFullTime("00:23"),
-    endTime: getFullTime("00:24"),
+    startTime: getFullTime("00:00"),
+    endTime: getFullTime("19:00"),
   },
   {
     title: "🥘 Food! 🧆",
-    startTime: getFullTime("00:24"),
-    endTime: getFullTime("00:25"),
+    startTime: getFullTime("19:00"),
+    endTime: getFullTime("20:00"),
   },
   {
     title: "🎤 ¡Alt-0161¡ 🎸",
-    startTime: getFullTime("00:25"),
-    endTime: getFullTime("00:26"),
+    startTime: getFullTime("20:00"),
+    endTime: getFullTime("21:00"),
   },
   {
     title: "🎧 Silent disco 🎧",
-    startTime: getFullTime("00:26"),
-    endTime: getFullTime("00:30"),
+    startTime: getFullTime("21:00"),
+    endTime: getFullTime("21:30"),
   },
   {
     title: "🍕 Pizza! 🍕",
-    startTime: getFullTime("00:30"),
-    endTime: getFullTime("00:59")
+    startTime: getFullTime("21:30"),
+    endTime: getFullTime("23:59"),
   },
 ];
 
@@ -47,29 +47,32 @@ function TimelineComponent() {
     return () => clearInterval(interval);
   }, []);
 
-  console.log(time.toISOString());
-
   return (
     <div className="timeline">
-      {schedule.map(({ title, startTime, endTime }) => {
-        const isCurrent = time.isBetween(startTime, endTime);
+      {schedule
+        .map(({ title, startTime, endTime }) => {
+          const isCurrent = time.isBetween(startTime, endTime);
 
-        return time.isBefore(endTime) ? (
-          <div
-            className={`eventContainer ${isCurrent && "currentlyHappening"}`}
-            style={{ background: isCurrent ? "#F9DC62" : "none" }}
-          >
-            <div className="eventInnerContainer">
-              <h1 style={{ color: isCurrent ? "black" : "white" }}>{title}</h1>
-              <h2 style={{ color: isCurrent ? "black" : "white" }}>
-                {`${dayjs(startTime).format("HH:mm")} aka ${dayjs(
+          return time.isBefore(endTime) ? (
+            <div
+              className={`eventContainer ${isCurrent && "currentlyHappening"}`}
+              style={{ background: isCurrent ? "#F9DC62" : "none" }}
+              key={title}
+            >
+              <div
+                style={{ color: isCurrent ? "black" : "white" }}
+                className="eventInnerContainer"
+              >
+                <h1>{title}</h1>
+                <h2>{`${dayjs(startTime).format("HH:mm")} aka ${dayjs(
                   startTime,
-                ).unix()}`}
-              </h2>
+                ).unix()}`}</h2>
+              </div>
             </div>
-          </div>
-        ) : null;
-      })}
+          ) : null;
+        })
+        .filter(Boolean)
+        .slice(0, 3)}
 
       <div className="easterEgg">{time.unix()}</div>
     </div>

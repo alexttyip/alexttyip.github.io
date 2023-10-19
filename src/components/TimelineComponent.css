@@ -38,15 +38,10 @@ h2 {
   margin: 0;
 }
 
-.currentlyHappening h2 {
-  font-size: 2em;
-}
-
 .easterEgg {
   position: absolute;
-  left:0;
-  bottom:0;
+  left: 0;
+  bottom: 0;
 
   color: orange;
-
 }
