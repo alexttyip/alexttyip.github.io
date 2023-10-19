@@ -1,56 +1,60 @@
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 import "./TimelineComponent.css";
 
 import { useEffect, useState } from "react";
 
+dayjs.extend(isBetween);
+
+const PARTY_DATE = "2023-10-20";
+
+const getFullTime = (time: string) => `${PARTY_DATE}T${time}:00+01:00`;
+
 const schedule = [
   {
     title: "🎉 Let the party begin 🎉",
-    startTime: 1800,
-    endTime: 1900,
+    startTime: getFullTime("00:08"),
+    endTime: getFullTime("00:09"),
   },
   {
     title: "🥘 Food! 🧆",
-    startTime: 1900,
-    endTime: 2000,
+    startTime: getFullTime("00:09"),
+    endTime: getFullTime("00:13"),
   },
   {
     title: "🎤 ¡Alt-0161¡ 🎸",
-    startTime: 2000,
-    endTime: 2100,
+    startTime: getFullTime("00:14"),
+    endTime: getFullTime("00:15"),
   },
   {
     title: "🎧 Silent disco 🎧",
-    startTime: 2100,
-    endTime: 2130,
+    startTime: getFullTime("00:15"),
+    endTime: getFullTime("00:16"),
   },
   {
     title: "🍕 Pizza! 🍕",
-    startTime: 2130,
-    endTime: 2200,
+    startTime: `${PARTY_DATE} 23:50`,
+    endTime: `${PARTY_DATE} 23:50`,
   },
 ];
 
-const getCurrentTime = () => {
-  const date = new Date();
-
-  // DST +1
-  return (date.getUTCHours() + 1 - 4) * 100 + date.getUTCMinutes();
-};
-
 function TimelineComponent() {
-  const [time, setTime] = useState<number>(getCurrentTime);
+  const [time, setTime] = useState(dayjs());
 
   useEffect(() => {
-    const interval = setInterval(() => setTime(getCurrentTime), 10_000);
+    const interval = setInterval(() => setTime(dayjs()), 1000);
 
     return () => clearInterval(interval);
   }, []);
 
+  console.log(time.toISOString());
+
   return (
     <div className="timeline">
       {schedule.map(({ title, startTime, endTime }) => {
-        const isCurrent = startTime <= time;
-        return time <= endTime ? (
+        const isCurrent = time.isBetween(startTime, endTime);
+
+        return time.isBefore(endTime) ? (
           <div
             className={`trackContainer ${isCurrent && "currentlyPlaying"}`}
             style={{ background: isCurrent ? "#F9DC62" : "none" }}
@@ -58,9 +62,9 @@ function TimelineComponent() {
             <div className="trackInnerContainer">
               <h1 style={{ color: isCurrent ? "black" : "white" }}>{title}</h1>
               <h2 style={{ color: isCurrent ? "black" : "white" }}>
-                {`${startTime.toString().substring(0, 2)}:${startTime
-                  .toString()
-                  .substring(2)}`}
+                {`${dayjs(startTime).format("HH:mm")} aka ${dayjs(
+                  startTime,
+                ).unix()}`}
               </h2>
             </div>
           </div>
