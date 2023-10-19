@@ -1,8 +1,8 @@
 import "./App.css";
 
-import { requestAccessToken, requestAuth } from "./authorization.ts";
+import { requestAccessToken, requestAuth } from "../clients/authorization.ts";
 import { useEffect, useState } from "react";
-import { getQueue, Queue } from "./queueClient.ts";
+import { getQueue, Queue } from "../clients/queueClient.ts";
 import TrackComponent from "./TrackComponent.tsx";
 
 function App() {

@@ -1,7 +1,7 @@
 import { useColor } from "color-thief-react";
 import Color from "color";
 import "./TrackComponent.css";
-import { Track } from "./queueClient.ts";
+import { Track } from "../clients/queueClient.ts";
 
 type TrackComponentProps = Track & {
   isCurrent?: boolean;
