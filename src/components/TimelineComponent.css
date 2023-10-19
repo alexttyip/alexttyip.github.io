@@ -1,0 +1,43 @@
+.timeline {
+  height: 100vh;
+}
+
+.trackContainer {
+  height: 28%;
+  display: flex;
+}
+
+.currentlyPlaying {
+  height: 44%;
+}
+
+.trackInnerContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  padding: 2em;
+
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  font-size: 3em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+.currentlyPlaying h1 {
+  font-size: 6em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.currentlyPlaying h2 {
+  font-size: 2em;
+}

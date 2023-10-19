@@ -1,11 +1,11 @@
-import "./App.css";
+import "./QueueComponent.css";
 
 import { requestAccessToken, requestAuth } from "../clients/authorization.ts";
 import { useEffect, useState } from "react";
 import { getQueue, Queue } from "../clients/queueClient.ts";
 import TrackComponent from "./TrackComponent.tsx";
 
-function App() {
+function QueueComponent() {
   const [queue, setQueue] = useState<Queue>();
 
   useEffect(() => {
@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       void getQueue().then(setQueue);
-    }, 1000);
+    }, 100);
 
     return () => clearInterval(interval);
   }, []);
@@ -79,4 +79,4 @@ function App() {
   );
 }
 
-export default App;
+export default QueueComponent;
