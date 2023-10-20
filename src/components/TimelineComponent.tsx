@@ -27,8 +27,13 @@ const schedule = [
     endTime: getFullTime("21:00"),
   },
   {
-    title: "🎧 Silent disco 🎧",
+    title: "🎂 Cake¡ 🎂",
     startTime: getFullTime("21:00"),
+    endTime: getFullTime("21:10"),
+  },
+  {
+    title: "🎧 Silent disco 🎧",
+    startTime: getFullTime("21:10"),
     endTime: getFullTime("21:30"),
   },
   {
