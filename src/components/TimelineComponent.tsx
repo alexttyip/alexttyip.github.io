@@ -1,45 +1,42 @@
 import dayjs from "dayjs";
-import isBetween from "dayjs/plugin/isBetween";
 import "./TimelineComponent.css";
 
 import { useEffect, useState } from "react";
 
-dayjs.extend(isBetween);
+const getFullTime = (hour: number, minute: number) =>
+  dayjs().set("hour", hour).set("minute", minute);
 
-const PARTY_DATE = "2023-10-20";
-
-const getFullTime = (time: string) => `${PARTY_DATE}T${time}:00+01:00`;
-
-const schedule = [
+const schedule: {
+  title: string;
+  startTime: dayjs.Dayjs;
+}[] = [
   {
     title: "🎉 Let the party begin 🎉",
-    startTime: getFullTime("00:00"),
-    endTime: getFullTime("19:00"),
+    startTime: getFullTime(0, 0),
   },
   {
-    title: "🥘 Food! 🧆",
-    startTime: getFullTime("19:00"),
-    endTime: getFullTime("20:00"),
+    title: "🍕 Pizza Wave 1! 🍕",
+    startTime: getFullTime(18, 30),
   },
   {
     title: "🎤 ¡Alt-0161¡ 🎸",
-    startTime: getFullTime("20:00"),
-    endTime: getFullTime("21:00"),
+    startTime: getFullTime(20, 0),
   },
   {
-    title: "🎂 Cake¡ 🎂",
-    startTime: getFullTime("21:00"),
-    endTime: getFullTime("21:10"),
+    title: "🐓 Cardinal Rule 🇺🇸",
+    startTime: getFullTime(20, 30),
   },
   {
     title: "🎧 Silent disco 🎧",
-    startTime: getFullTime("21:10"),
-    endTime: getFullTime("21:30"),
+    startTime: getFullTime(20, 45),
   },
   {
-    title: "🍕 Pizza! 🍕",
-    startTime: getFullTime("21:30"),
-    endTime: getFullTime("23:59"),
+    title: "🍕 Pizza wave 2! 🍕",
+    startTime: getFullTime(21, 30),
+  },
+  {
+    title: "🎂 Cake¡ 🎂",
+    startTime: getFullTime(21, 0),
   },
 ];
 
@@ -55,26 +52,38 @@ function TimelineComponent() {
   return (
     <div className="timeline">
       {schedule
-        .map(({ title, startTime, endTime }) => {
-          const isCurrent = time.isBetween(startTime, endTime);
-
-          return time.isBefore(endTime) ? (
-            <div
-              className={`eventContainer ${isCurrent && "currentlyHappening"}`}
-              style={{ background: isCurrent ? "#F9DC62" : "none" }}
-              key={title}
-            >
+        .map(({ title, startTime }, i, arr) => {
+          if (time.isBefore(startTime)) {
+            return (
               <div
-                style={{ color: isCurrent ? "black" : "white" }}
-                className="eventInnerContainer"
+                className="eventContainer"
+                style={{ background: "none" }}
+                key={title}
               >
-                <h1>{title}</h1>
-                <h2>{`${dayjs(startTime).format("HH:mm")} aka ${dayjs(
-                  startTime,
-                ).unix()}`}</h2>
+                <div style={{ color: "white" }} className="eventInnerContainer">
+                  <h1>{title}</h1>
+                  <h2>{`${startTime.format("HH:mm")} aka ${startTime.unix()}`}</h2>
+                </div>
               </div>
-            </div>
-          ) : null;
+            );
+          }
+
+          if (time.isAfter(startTime) && time.isBefore(arr[i + 1].startTime)) {
+            return (
+              <div
+                className="eventContainer currentlyHappening"
+                style={{ background: "#F9DC62" }}
+                key={title}
+              >
+                <div style={{ color: "black" }} className="eventInnerContainer">
+                  <h1>{title}</h1>
+                  <h2>{`${startTime.format("HH:mm")} aka ${startTime.unix()}`}</h2>
+                </div>
+              </div>
+            );
+          }
+
+          return null;
         })
         .filter(Boolean)
         .slice(0, 3)}
