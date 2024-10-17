@@ -1,3 +1,5 @@
+// Spotify Authorization Code with PKCE Flow
+
 const CLIENT_ID = "0fdaae456f1f4de39b3e9cca593980d1" as const;
 const REDIRECT_URI =
   process.env.NODE_ENV === "development"
@@ -17,6 +19,7 @@ function generateRandomString(length: number) {
 }
 
 function base64encode(stringToEncode: string) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return btoa(String.fromCharCode.apply(null, new Uint8Array(stringToEncode)))
     .replace(/\+/g, "-")
@@ -29,6 +32,7 @@ async function generateCodeChallenge(codeVerifier: string) {
   const data = encoder.encode(codeVerifier);
   const digest = await window.crypto.subtle.digest("SHA-256", data);
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return base64encode(digest);
 }
@@ -45,9 +49,9 @@ export function requestAuth() {
     const args = new URLSearchParams({
       response_type: "code",
       client_id: CLIENT_ID,
-      scope: scope,
+      scope,
       redirect_uri: REDIRECT_URI,
-      state: state,
+      state,
       code_challenge_method: "S256",
       code_challenge: codeChallenge,
     });
@@ -76,18 +80,22 @@ async function requestToken(code: string) {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: body,
+    body,
   });
 
   if (!response.ok) {
     throw new Error("HTTP status " + response.status);
   }
 
-  const data = (await response.json()) as {
+  const { access_token, refresh_token } = (await response.json()) as {
     access_token: string;
-    refresh_token: string;
+    refresh_token?: string;
   };
-  localStorage.setItem("access_token", data.access_token);
+  localStorage.setItem("access_token", access_token);
+
+  if (refresh_token) {
+    localStorage.setItem("refresh_token", refresh_token);
+  }
 }
 
 export async function requestAccessToken() {
@@ -101,5 +109,39 @@ export async function requestAccessToken() {
   if (code) {
     await requestToken(code);
     window.location.reload();
+  }
+}
+
+export async function getRefreshToken() {
+  const refreshToken = localStorage.getItem(`refresh_token`);
+
+  if (!refreshToken) {
+    throw "Well shit you've not got a refresh token!";
+  }
+
+  const url = "https://accounts.spotify.com/api/token";
+
+  const payload = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: refreshToken,
+      client_id: CLIENT_ID,
+    }),
+  };
+
+  const body = await fetch(url, payload);
+  const { access_token, refresh_token } = (await body.json()) as {
+    access_token: string;
+    refresh_token?: string;
+  };
+
+  localStorage.setItem(`access_token`, access_token);
+
+  if (refresh_token) {
+    localStorage.setItem(`refresh_token`, refresh_token);
   }
 }

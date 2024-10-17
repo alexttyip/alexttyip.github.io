@@ -34,6 +34,12 @@ export async function getCurrentlyPlaying(): Promise<Track> {
     },
   });
 
+  if (!response.ok) {
+    console.error("Get queue HTTP status " + response.status);
+
+    throw new Error("Get queue HTTP status " + response.status);
+  }
+
   const { currently_playing } = (await response.json()) as QueueResponse;
 
   return {

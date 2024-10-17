@@ -1,5 +1,9 @@
 import "./CurrentlyPlayingComponent.css";
-import { requestAccessToken, requestAuth } from "../clients/authorization.ts";
+import {
+  getRefreshToken,
+  requestAccessToken,
+  requestAuth,
+} from "../clients/authorization.ts";
 import { useEffect, useState } from "react";
 import {
   getCurrentlyPlaying,
@@ -19,9 +23,11 @@ function CurrentlyPlayingComponent() {
   useEffect(() => {
     const interval = setInterval(() => {
       if (localStorage.getItem("access_token")) {
-        void getCurrentlyPlaying().then(setCurrentlyPlaying);
+        void getCurrentlyPlaying()
+          .then(setCurrentlyPlaying)
+          .catch(getRefreshToken);
       }
-    }, 100);
+    }, 800);
 
     return () => clearInterval(interval);
   }, []);
