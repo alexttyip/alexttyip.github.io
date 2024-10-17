@@ -1,14 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
-import QueueComponent from "./components/QueueComponent.tsx";
+import CurrentlyPlayingComponent from "./components/CurrentlyPlayingComponent.tsx";
 import TimelineComponent from "./components/TimelineComponent.tsx";
 import "./index.css";
 
 const router = createHashRouter([
   {
     path: "/",
-    element: <QueueComponent />,
+    element: <CurrentlyPlayingComponent />,
   },
   {
     path: "/timeline",
@@ -18,7 +18,6 @@ const router = createHashRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    {/* <App /> */}
     <RouterProvider router={router} />
   </React.StrictMode>,
 );

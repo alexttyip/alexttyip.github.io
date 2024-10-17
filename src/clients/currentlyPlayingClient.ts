@@ -19,15 +19,13 @@ type ArtistResponse = {
   name: string;
 };
 
-export type Queue = Track[];
-
 export type Track = {
   name: string;
   imageUrl: string;
   artists: string[];
 };
 
-export async function getQueue(): Promise<Queue> {
+export async function getCurrentlyPlaying(): Promise<Track> {
   const accessToken = localStorage.getItem("access_token");
 
   const response = await fetch("https://api.spotify.com/v1/me/player/queue", {
@@ -36,13 +34,11 @@ export async function getQueue(): Promise<Queue> {
     },
   });
 
-  const { currently_playing, queue } = (await response.json()) as QueueResponse;
+  const { currently_playing } = (await response.json()) as QueueResponse;
 
-  return [currently_playing, ...queue.slice(0, 2)].map(
-    ({ name, album, artists }) => ({
-      name,
-      imageUrl: album.images[0].url,
-      artists: artists.map(({ name }) => name),
-    }),
-  );
+  return {
+    name: currently_playing.name,
+    imageUrl: currently_playing.album.images[0].url,
+    artists: currently_playing.artists.map(({ name }) => name),
+  };
 }

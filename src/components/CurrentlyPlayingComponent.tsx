@@ -1,24 +1,26 @@
-import "./QueueComponent.css";
-
+import "./CurrentlyPlayingComponent.css";
 import { requestAccessToken, requestAuth } from "../clients/authorization.ts";
 import { useEffect, useState } from "react";
-import { getQueue, Queue } from "../clients/queueClient.ts";
+import {
+  getCurrentlyPlaying,
+  Track,
+} from "../clients/currentlyPlayingClient.ts";
 import TrackComponent from "./TrackComponent.tsx";
 
-function QueueComponent() {
-  const [queue, setQueue] = useState<Queue>();
+function CurrentlyPlayingComponent() {
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<Track>();
 
   useEffect(() => {
     if (!localStorage.getItem("access_token")) {
       void requestAccessToken();
-    } else {
-      void getQueue().then(setQueue);
     }
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      void getQueue().then(setQueue);
+      if (localStorage.getItem("access_token")) {
+        void getCurrentlyPlaying().then(setCurrentlyPlaying);
+      }
     }, 100);
 
     return () => clearInterval(interval);
@@ -32,7 +34,7 @@ function QueueComponent() {
     );
   }
 
-  if (!queue) {
+  if (!currentlyPlaying) {
     return <div className="container">You sure you're playing something?</div>;
   }
 
@@ -50,6 +52,7 @@ function QueueComponent() {
         >
           Red
         </button>
+
         <button
           onClick={() => {
             window.location.href = `${window.location.href}&channel=blue`;
@@ -58,6 +61,7 @@ function QueueComponent() {
         >
           Blue
         </button>
+
         <button
           onClick={() => {
             window.location.href = `${window.location.href}&channel=green`;
@@ -71,12 +75,10 @@ function QueueComponent() {
   }
 
   return (
-    <div className="queue">
-      {queue.map((item, i) => (
-        <TrackComponent {...item} isCurrent={i === 0} channel={channel} />
-      ))}
+    <div className="currentlyPlayingWrapper">
+      <TrackComponent {...currentlyPlaying} channel={channel} />
     </div>
   );
 }
 
-export default QueueComponent;
+export default CurrentlyPlayingComponent;

@@ -1,45 +1,29 @@
 .trackContainer {
-  height: 28%;
-  display: flex;
-}
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
-.currentlyPlaying {
-  height: 44%;
-}
+    align-items: center;
 
-.trackInnerContainer {
-  display: flex;
+    text-align: center;
 
-  padding: 2em;
+    padding-top: 1rem;
 
-  justify-content: flex-start;
-  align-items: flex-start;
+    img {
+        max-width: 50%;
+        max-height: 50%;
+        margin-bottom: 4rem;
+    }
 
-  gap: 2em;
-}
+    h1 {
+        font-size: 7em;
+        margin-left: 2rem;
+        margin-right: 2rem;
+    }
 
-img {
-  max-width: 50%;
-  max-height: 50%;
-}
-
-.detailsContainer {
-  display: flex;
-  flex-direction: column;
-}
-
-h1 {
-  font-size: 2em;
-  line-height: 1.1;
-  margin: 0;
-}
-
-h2 {
-  font-size: 1em;
-}
-
-.currentlyPlaying h1 {
-  font-size: 3em;
-  line-height: 1.1;
-  margin: 0;
+    h2 {
+        font-size: 3em;
+        margin-left: 2rem;
+        margin-right: 2rem;
+    }
 }
