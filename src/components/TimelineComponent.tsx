@@ -34,10 +34,6 @@ const schedule: {
     title: "🍕 Pizza wave 2! 🍕",
     startTime: getFullTime(21, 30),
   },
-  {
-    title: "🎂 Cake¡ 🎂",
-    startTime: getFullTime(21, 0),
-  },
 ];
 
 function TimelineComponent() {
