@@ -91,6 +91,7 @@ async function requestToken(code: string) {
     access_token: string;
     refresh_token?: string;
   };
+
   localStorage.setItem("access_token", access_token);
 
   if (refresh_token) {
@@ -116,9 +117,9 @@ export async function getRefreshToken() {
   const refreshToken = localStorage.getItem(`refresh_token`);
 
   if (!refreshToken) {
-    localStorage.clear();
     console.error("Refresh token not found, clearing local storage");
-    return;
+
+    return clearTokensAndForceReLogin();
   }
 
   const url = "https://accounts.spotify.com/api/token";
@@ -146,4 +147,10 @@ export async function getRefreshToken() {
   if (refresh_token) {
     localStorage.setItem(`refresh_token`, refresh_token);
   }
+}
+
+export function clearTokensAndForceReLogin() {
+  localStorage.clear();
+
+  return requestAccessToken();
 }

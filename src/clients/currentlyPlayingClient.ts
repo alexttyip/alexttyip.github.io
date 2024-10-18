@@ -1,6 +1,7 @@
+import { clearTokensAndForceReLogin } from "./authorization.ts";
+
 type QueueResponse = {
-  currently_playing: TrackResponse;
-  queue: TrackResponse[];
+  currently_playing?: TrackResponse;
 };
 
 type TrackResponse = {
@@ -25,7 +26,7 @@ export type Track = {
   artists: string[];
 };
 
-export async function getCurrentlyPlaying(): Promise<Track> {
+export async function getCurrentlyPlaying(): Promise<Track | undefined> {
   const accessToken = localStorage.getItem("access_token");
 
   const response = await fetch("https://api.spotify.com/v1/me/player/queue", {
@@ -35,12 +36,18 @@ export async function getCurrentlyPlaying(): Promise<Track> {
   });
 
   if (!response.ok) {
-    console.error("Get queue HTTP status " + response.status);
+    if (response.status >= 400 && response.status < 500) {
+      await clearTokensAndForceReLogin();
+    }
 
     throw new Error("Get queue HTTP status " + response.status);
   }
 
   const { currently_playing } = (await response.json()) as QueueResponse;
+
+  if (!currently_playing) {
+    return;
+  }
 
   return {
     name: currently_playing.name,
