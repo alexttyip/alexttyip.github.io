@@ -116,7 +116,9 @@ export async function getRefreshToken() {
   const refreshToken = localStorage.getItem(`refresh_token`);
 
   if (!refreshToken) {
-    throw "Well shit you've not got a refresh token!";
+    localStorage.clear();
+    console.error("Refresh token not found, clearing local storage");
+    return;
   }
 
   const url = "https://accounts.spotify.com/api/token";
