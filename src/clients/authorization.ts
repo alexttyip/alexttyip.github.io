@@ -87,12 +87,14 @@ async function requestToken(code: string) {
     throw new Error("HTTP status " + response.status);
   }
 
-  const { access_token, refresh_token } = (await response.json()) as {
+  const { access_token, refresh_token, expires_in } = (await response.json()) as {
     access_token: string;
     refresh_token?: string;
+    expires_in: number;
   };
 
   localStorage.setItem("access_token", access_token);
+  localStorage.setItem("token_expiry", String(Date.now() + expires_in * 1000));
 
   if (refresh_token) {
     localStorage.setItem("refresh_token", refresh_token);
@@ -139,15 +141,18 @@ export async function getRefreshToken() {
   const response = await fetch(url, payload);
 
   if (!response.ok) {
+    await clearTokensAndForceReLogin();
     throw new Error("Refresh token failed: HTTP status " + response.status);
   }
 
-  const { access_token, refresh_token } = (await response.json()) as {
+  const { access_token, refresh_token, expires_in } = (await response.json()) as {
     access_token: string;
     refresh_token?: string;
+    expires_in: number;
   };
 
   localStorage.setItem(`access_token`, access_token);
+  localStorage.setItem(`token_expiry`, String(Date.now() + expires_in * 1000));
 
   if (refresh_token) {
     localStorage.setItem(`refresh_token`, refresh_token);

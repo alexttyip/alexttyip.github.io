@@ -21,14 +21,32 @@ function CurrentlyPlayingComponent() {
   }, []);
 
   useEffect(() => {
-    // Proactively refresh token before each Spotify API call
-    async function poll() {
+    // Check and refresh token if needed (every minute)
+    async function checkAndRefreshToken() {
       if (!localStorage.getItem("access_token")) {
         return;
       }
 
       try {
-        await getRefreshToken();
+        const expiry = Number(localStorage.getItem("token_expiry") || 0);
+        const thirtyMinutesInMs = 30 * 60 * 1000;
+
+        // Refresh if we're past the 30-minute mark of the 1-hour window
+        if (Date.now() >= expiry - thirtyMinutesInMs) {
+          await getRefreshToken();
+        }
+      } catch (err) {
+        console.warn("[Spotify] Token refresh error:", err);
+      }
+    }
+
+    // Poll for currently playing track (every 2 seconds)
+    async function pollCurrentTrack() {
+      if (!localStorage.getItem("access_token")) {
+        return;
+      }
+
+      try {
         const track = await getCurrentlyPlaying();
         setCurrentlyPlaying(track);
       } catch (err) {
@@ -36,10 +54,18 @@ function CurrentlyPlayingComponent() {
       }
     }
 
-    void poll();
-    const interval = setInterval(poll, 2000);
+    // Run once immediately
+    void checkAndRefreshToken();
+    void pollCurrentTrack();
 
-    return () => clearInterval(interval);
+    // Set up intervals
+    const tokenCheckInterval = setInterval(checkAndRefreshToken, 60 * 1000); // 1 minute
+    const pollInterval = setInterval(pollCurrentTrack, 2000); // 2 seconds
+
+    return () => {
+      clearInterval(tokenCheckInterval);
+      clearInterval(pollInterval);
+    };
   }, []);
 
   if (!localStorage.getItem("access_token")) {

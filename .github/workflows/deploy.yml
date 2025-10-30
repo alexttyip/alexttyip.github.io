@@ -36,8 +36,10 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
+      - name: Upgrade npm
+        run: npm i -g npm@11 --fund=false --audit=false
       - name: Install dependencies
-        run: npm install
+        run: npm ci --fund=false --audit=false
       - name: Build
         run: npm run build
       - name: Setup Pages
