@@ -136,8 +136,13 @@ export async function getRefreshToken() {
     }),
   };
 
-  const body = await fetch(url, payload);
-  const { access_token, refresh_token } = (await body.json()) as {
+  const response = await fetch(url, payload);
+
+  if (!response.ok) {
+    throw new Error("Refresh token failed: HTTP status " + response.status);
+  }
+
+  const { access_token, refresh_token } = (await response.json()) as {
     access_token: string;
     refresh_token?: string;
   };

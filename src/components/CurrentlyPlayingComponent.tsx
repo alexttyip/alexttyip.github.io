@@ -21,13 +21,23 @@ function CurrentlyPlayingComponent() {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (localStorage.getItem("access_token")) {
-        void getCurrentlyPlaying()
-          .then(setCurrentlyPlaying)
-          .catch(getRefreshToken);
+    // Proactively refresh token before each Spotify API call
+    async function poll() {
+      if (!localStorage.getItem("access_token")) {
+        return;
       }
-    }, 800);
+
+      try {
+        await getRefreshToken();
+        const track = await getCurrentlyPlaying();
+        setCurrentlyPlaying(track);
+      } catch (err) {
+        console.warn("[Spotify] Polling error:", err);
+      }
+    }
+
+    void poll();
+    const interval = setInterval(poll, 2000);
 
     return () => clearInterval(interval);
   }, []);
