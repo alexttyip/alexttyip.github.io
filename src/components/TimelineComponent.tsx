@@ -15,20 +15,16 @@ const schedule: {
     startTime: getFullTime(0, 0),
   },
   {
-    title: "🍕 Pizza Wave 1! 🍕",
-    startTime: getFullTime(18, 30),
-  },
-  {
-    title: "🎤 ¡Alt-0161¡ 🎸",
-    startTime: getFullTime(20, 0),
+    title: "🍕 Pizza Wave 1 & Rizzos 🍕",
+    startTime: getFullTime(19, 0),
   },
   {
     title: "🐓 Cardinal Rule 🇺🇸",
-    startTime: getFullTime(20, 30),
+    startTime: getFullTime(19, 30),
   },
   {
     title: "🎧 Silent disco 🎧",
-    startTime: getFullTime(20, 45),
+    startTime: getFullTime(20, 30),
   },
   {
     title: "🍕 Pizza wave 2! 🍕",
