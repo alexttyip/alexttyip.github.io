@@ -21,15 +21,10 @@ function CurrentlyPlayingComponent() {
   }, []);
 
   useEffect(() => {
-    // Check and refresh token if needed (every minute)
     async function checkAndRefreshToken() {
-      if (!localStorage.getItem("access_token")) {
-        return;
-      }
-
       try {
         const expiry = Number(localStorage.getItem("token_expiry") || 0);
-        const thirtyMinutesInMs = 30 * 60 * 1000;
+        const thirtyMinutesInMs = 1_800_000;
 
         // Refresh if we're past the 30-minute mark of the 1-hour window
         if (Date.now() >= expiry - thirtyMinutesInMs) {
@@ -40,7 +35,6 @@ function CurrentlyPlayingComponent() {
       }
     }
 
-    // Poll for currently playing track (every 2 seconds)
     async function pollCurrentTrack() {
       if (!localStorage.getItem("access_token")) {
         return;
@@ -54,13 +48,11 @@ function CurrentlyPlayingComponent() {
       }
     }
 
-    // Run once immediately
-    void checkAndRefreshToken();
     void pollCurrentTrack();
 
     // Set up intervals
-    const tokenCheckInterval = setInterval(checkAndRefreshToken, 60 * 1000); // 1 minute
-    const pollInterval = setInterval(pollCurrentTrack, 2000); // 2 seconds
+    const tokenCheckInterval = setInterval(checkAndRefreshToken, 60_000); // 1 minute
+    const pollInterval = setInterval(pollCurrentTrack, 2_000); // 2 seconds
 
     return () => {
       clearInterval(tokenCheckInterval);
