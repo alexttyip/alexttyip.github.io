@@ -2,13 +2,21 @@
   height: 100vh;
 }
 
+h1 {
+  font-size: 3em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+h2 {
+  font-size: 2em;
+}
+
 .eventContainer {
   height: 28%;
   display: flex;
-}
-
-.currentlyHappening {
-  height: 44%;
+  background: none;
+  color: white;
 }
 
 .eventInnerContainer {
@@ -22,20 +30,17 @@
   justify-content: center;
 }
 
-h1 {
-  font-size: 3em;
-  line-height: 1.1;
-  margin: 0;
-}
+.currentlyHappening {
+  height: 44%;
+  background: #ff7518;
 
-h2 {
-  font-size: 2em;
-}
+  color: black;
 
-.currentlyHappening h1 {
-  font-size: 6em;
-  line-height: 1.1;
-  margin: 0;
+  h1 {
+    font-size: 6em;
+    line-height: 1.1;
+    margin: 0;
+  }
 }
 
 .easterEgg {
@@ -43,5 +48,5 @@ h2 {
   left: 0;
   bottom: 0;
 
-  color: orange;
+  color: #ff7518;
 }

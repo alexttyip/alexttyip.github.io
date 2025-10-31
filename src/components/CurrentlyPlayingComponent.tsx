@@ -7,11 +7,17 @@ import {
 import { useEffect, useState } from "react";
 import {
   getCurrentlyPlaying,
-  Track,
+  type Track,
 } from "../clients/currentlyPlayingClient.ts";
 import TrackComponent from "./TrackComponent.tsx";
 
-function CurrentlyPlayingComponent() {
+const setChannelQueryParam = (channel: string) => {
+  const url = new URL(window.location.href);
+  url.searchParams.set("channel", channel);
+  window.location.href = url.toString();
+};
+
+const CurrentlyPlayingComponent = () => {
   const [currentlyPlaying, setCurrentlyPlaying] = useState<Track>();
 
   useEffect(() => {
@@ -79,27 +85,21 @@ function CurrentlyPlayingComponent() {
     return (
       <div className="container channelSelector">
         <button
-          onClick={() => {
-            window.location.href = `${window.location.href}&channel=red`;
-          }}
+          onClick={() => setChannelQueryParam("red")}
           style={{ background: "red" }}
         >
           Red
         </button>
 
         <button
-          onClick={() => {
-            window.location.href = `${window.location.href}&channel=blue`;
-          }}
+          onClick={() => setChannelQueryParam("blue")}
           style={{ background: "blue" }}
         >
           Blue
         </button>
 
         <button
-          onClick={() => {
-            window.location.href = `${window.location.href}&channel=green`;
-          }}
+          onClick={() => setChannelQueryParam("green")}
           style={{ background: "green" }}
         >
           Green
@@ -113,6 +113,6 @@ function CurrentlyPlayingComponent() {
       <TrackComponent {...currentlyPlaying} channel={channel} />
     </div>
   );
-}
+};
 
 export default CurrentlyPlayingComponent;

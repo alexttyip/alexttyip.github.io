@@ -4,7 +4,7 @@ import "./TimelineComponent.css";
 import { useEffect, useState } from "react";
 
 const getFullTime = (hour: number, minute: number) =>
-  dayjs().set("hour", hour).set("minute", minute);
+  dayjs().set("hour", hour).set("minute", minute).startOf("minute");
 
 const schedule: {
   title: string;
@@ -15,7 +15,7 @@ const schedule: {
     startTime: getFullTime(0, 0),
   },
   {
-    title: "🍕 Pizza Wave 1 & Rizzos 🍕",
+    title: "🍕 Pizza Wave 1 & Rizzos 🇮🇹",
     startTime: getFullTime(19, 0),
   },
   {
@@ -47,29 +47,25 @@ function TimelineComponent() {
         .map(({ title, startTime }, i, arr) => {
           if (time.isBefore(startTime)) {
             return (
-              <div
-                className="eventContainer"
-                style={{ background: "none" }}
-                key={title}
-              >
-                <div style={{ color: "white" }} className="eventInnerContainer">
+              <div className="eventContainer" key={title}>
+                <div className="eventInnerContainer">
                   <h1>{title}</h1>
-                  <h2>{`${startTime.format("HH:mm")} aka ${startTime.unix()}`}</h2>
+                  <h2>
+                    {`${startTime.unix()} (${startTime.format("HH:mm")})`}
+                  </h2>
                 </div>
               </div>
             );
           }
 
-          if (time.isAfter(startTime) && time.isBefore(arr[i + 1].startTime)) {
+          if (
+            time.isAfter(startTime) &&
+            (!arr[i + 1] || time.isBefore(arr[i + 1].startTime))
+          ) {
             return (
-              <div
-                className="eventContainer currentlyHappening"
-                style={{ background: "#F9DC62" }}
-                key={title}
-              >
-                <div style={{ color: "black" }} className="eventInnerContainer">
+              <div className="eventContainer currentlyHappening" key={title}>
+                <div className="eventInnerContainer">
                   <h1>{title}</h1>
-                  <h2>{`${startTime.format("HH:mm")} aka ${startTime.unix()}`}</h2>
                 </div>
               </div>
             );

@@ -1,6 +1,6 @@
 import Color from "color";
 import "./TrackComponent.css";
-import { Track } from "../clients/currentlyPlayingClient.ts";
+import type { Track } from "../clients/currentlyPlayingClient.ts";
 
 type TrackComponentProps = Track & {
   channel: string;

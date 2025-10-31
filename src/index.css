@@ -1,20 +1,5 @@
-@font-face {
-  font-family: "AktivGrotesk";
-  src:
-    local("AktivGrotesk-Regular.ttf"),
-    url("./fonts/AktivGrotesk-Regular.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "AktivGrotesk";
-  src:
-    local("AktivGrotesk-Bold.ttf"),
-    url("./fonts/AktivGrotesk-Bold.ttf") format("truetype");
-  font-weight: bold;
-}
-
 :root {
-  font-family: AktivGrotesk, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Creepster", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
