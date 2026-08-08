@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import CurrentlyPlayingComponent from "./components/CurrentlyPlayingComponent.tsx";
 import TimelineComponent from "./components/TimelineComponent.tsx";
+import MockBadgeComponent from "./components/MockBadgeComponent.tsx";
 import "./index.css";
 
 const router = createHashRouter([
@@ -18,6 +19,7 @@ const router = createHashRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
+    <MockBadgeComponent />
     <RouterProvider router={router} />
   </StrictMode>,
 );
