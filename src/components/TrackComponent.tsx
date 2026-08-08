@@ -23,10 +23,7 @@ const TrackComponent = ({
       }}
     >
       <img src={imageUrl} alt={name} />
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-      }}>
+      <div className="trackDetails">
         <h1>{name}</h1>
         <h2>{artists.join(", ")}</h2>
       </div>
