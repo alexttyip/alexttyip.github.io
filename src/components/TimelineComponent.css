@@ -32,7 +32,7 @@ h2 {
 
 .currentlyHappening {
   height: 44%;
-  background: #ff7518;
+  background: #f9dc62;
 
   color: black;
 
@@ -48,5 +48,5 @@ h2 {
   left: 0;
   bottom: 0;
 
-  color: #ff7518;
+  color: orange;
 }
