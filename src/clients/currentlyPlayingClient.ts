@@ -22,7 +22,7 @@ type ArtistResponse = {
 
 export type Track = {
   name: string;
-  imageUrl: string;
+  imageUrl?: string;
   artists: string[];
 };
 
@@ -51,7 +51,7 @@ export async function getCurrentlyPlaying(): Promise<Track | undefined> {
 
   return {
     name: currently_playing.name,
-    imageUrl: currently_playing.album.images[0].url,
+    imageUrl: currently_playing.album.images[0]?.url,
     artists: currently_playing.artists.map(({ name }) => name),
   };
 }

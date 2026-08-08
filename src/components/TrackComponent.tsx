@@ -22,7 +22,7 @@ const TrackComponent = ({
         color: colorObj.isLight() ? "black" : "white",
       }}
     >
-      <img src={imageUrl} alt={name} />
+      {imageUrl && <img src={imageUrl} alt={name} />}
       <div style={{
         display: "flex",
         flexDirection: "column",
