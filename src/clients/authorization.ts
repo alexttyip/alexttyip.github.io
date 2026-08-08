@@ -6,6 +6,52 @@ const REDIRECT_URI =
     ? "http://localhost:5173"
     : "https://alexttyip.github.io";
 
+const TOKEN_KEYS = ["access_token", "refresh_token", "token_expiry"] as const;
+
+const authListeners = new Set<() => void>();
+
+export function subscribeToAuth(listener: () => void) {
+  authListeners.add(listener);
+
+  return () => {
+    authListeners.delete(listener);
+  };
+}
+
+export function getAccessToken() {
+  return localStorage.getItem("access_token");
+}
+
+function notifyAuthChanged() {
+  authListeners.forEach((listener) => listener());
+}
+
+function storeTokens({
+  access_token,
+  refresh_token,
+  expires_in,
+}: {
+  access_token: string;
+  refresh_token?: string;
+  expires_in: number;
+}) {
+  localStorage.setItem("access_token", access_token);
+  localStorage.setItem("token_expiry", String(Date.now() + expires_in * 1000));
+
+  if (refresh_token) {
+    localStorage.setItem("refresh_token", refresh_token);
+  }
+
+  notifyAuthChanged();
+}
+
+function clearTokens() {
+  // Not localStorage.clear(): last_auth_attempt and channel must survive.
+  TOKEN_KEYS.forEach((key) => localStorage.removeItem(key));
+
+  notifyAuthChanged();
+}
+
 function generateRandomString(length: number) {
   let text = "";
   const possible =
@@ -87,22 +133,17 @@ async function requestToken(code: string) {
     throw new Error("HTTP status " + response.status);
   }
 
-  const { access_token, refresh_token, expires_in } = (await response.json()) as {
-    access_token: string;
-    refresh_token?: string;
-    expires_in: number;
-  };
-
-  localStorage.setItem("access_token", access_token);
-  localStorage.setItem("token_expiry", String(Date.now() + expires_in * 1000));
-
-  if (refresh_token) {
-    localStorage.setItem("refresh_token", refresh_token);
-  }
+  storeTokens(
+    (await response.json()) as {
+      access_token: string;
+      refresh_token?: string;
+      expires_in: number;
+    },
+  );
 }
 
 export async function requestAccessToken() {
-  if (localStorage.getItem("access_token")) {
+  if (getAccessToken()) {
     return;
   }
 
@@ -111,7 +152,6 @@ export async function requestAccessToken() {
 
   if (code) {
     await requestToken(code);
-    window.location.reload();
   }
 }
 
@@ -141,26 +181,32 @@ export async function getRefreshToken() {
   const response = await fetch(url, payload);
 
   if (!response.ok) {
-    await clearTokensAndForceReLogin();
+    clearTokensAndForceReLogin();
     throw new Error("Refresh token failed: HTTP status " + response.status);
   }
 
-  const { access_token, refresh_token, expires_in } = (await response.json()) as {
-    access_token: string;
-    refresh_token?: string;
-    expires_in: number;
-  };
-
-  localStorage.setItem(`access_token`, access_token);
-  localStorage.setItem(`token_expiry`, String(Date.now() + expires_in * 1000));
-
-  if (refresh_token) {
-    localStorage.setItem(`refresh_token`, refresh_token);
-  }
+  storeTokens(
+    (await response.json()) as {
+      access_token: string;
+      refresh_token?: string;
+      expires_in: number;
+    },
+  );
 }
 
-export function clearTokensAndForceReLogin() {
-  localStorage.clear();
+const REAUTH_COOLDOWN_MS = 300_000;
 
-  return requestAccessToken();
+export function clearTokensAndForceReLogin() {
+  clearTokens();
+
+  // Throttled so a persistently failing refresh can't become a redirect loop.
+  const lastAttempt = Number(localStorage.getItem("last_auth_attempt") || 0);
+
+  if (Date.now() - lastAttempt < REAUTH_COOLDOWN_MS) {
+    return;
+  }
+
+  localStorage.setItem("last_auth_attempt", String(Date.now()));
+
+  requestAuth();
 }

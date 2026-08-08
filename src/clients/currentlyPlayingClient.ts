@@ -1,4 +1,7 @@
-import { clearTokensAndForceReLogin } from "./authorization.ts";
+import {
+  clearTokensAndForceReLogin,
+  getAccessToken,
+} from "./authorization.ts";
 
 type QueueResponse = {
   currently_playing?: TrackResponse;
@@ -27,17 +30,15 @@ export type Track = {
 };
 
 export async function getCurrentlyPlaying(): Promise<Track | undefined> {
-  const accessToken = localStorage.getItem("access_token");
-
   const response = await fetch("https://api.spotify.com/v1/me/player/queue", {
     headers: {
-      Authorization: "Bearer " + accessToken,
+      Authorization: "Bearer " + getAccessToken(),
     },
   });
 
   if (!response.ok) {
     if (response.status >= 400 && response.status < 500) {
-      await clearTokensAndForceReLogin();
+      clearTokensAndForceReLogin();
     }
 
     throw new Error("Get queue HTTP status " + response.status);

@@ -1,10 +1,12 @@
 import "./CurrentlyPlayingComponent.css";
 import {
+  getAccessToken,
   getRefreshToken,
   requestAccessToken,
   requestAuth,
+  subscribeToAuth,
 } from "../clients/authorization.ts";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
   getCurrentlyPlaying,
   type Track,
@@ -12,21 +14,34 @@ import {
 import TrackComponent from "./TrackComponent.tsx";
 
 const setChannelQueryParam = (channel: string) => {
+  localStorage.setItem("channel", channel);
+
   const url = new URL(window.location.href);
   url.searchParams.set("channel", channel);
   window.location.href = url.toString();
 };
 
+const getChannel = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+
+  return urlParams.get("channel") ?? localStorage.getItem("channel");
+};
+
 const CurrentlyPlayingComponent = () => {
   const [currentlyPlaying, setCurrentlyPlaying] = useState<Track>();
+  const accessToken = useSyncExternalStore(subscribeToAuth, getAccessToken);
 
   useEffect(() => {
-    if (!localStorage.getItem("access_token")) {
+    if (!accessToken) {
       void requestAccessToken();
     }
-  }, []);
+  }, [accessToken]);
 
   useEffect(() => {
+    if (!accessToken) {
+      return;
+    }
+
     async function checkAndRefreshToken() {
       try {
         const expiry = Number(localStorage.getItem("token_expiry") || 0);
@@ -42,10 +57,6 @@ const CurrentlyPlayingComponent = () => {
     }
 
     async function pollCurrentTrack() {
-      if (!localStorage.getItem("access_token")) {
-        return;
-      }
-
       try {
         const track = await getCurrentlyPlaying();
         setCurrentlyPlaying(track);
@@ -64,9 +75,9 @@ const CurrentlyPlayingComponent = () => {
       clearInterval(tokenCheckInterval);
       clearInterval(pollInterval);
     };
-  }, []);
+  }, [accessToken]);
 
-  if (!localStorage.getItem("access_token")) {
+  if (!accessToken) {
     return (
       <div className="container">
         <button onClick={requestAuth}>Log in</button>
@@ -78,8 +89,7 @@ const CurrentlyPlayingComponent = () => {
     return <div className="container">You sure you're playing something?</div>;
   }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const channel = urlParams.get("channel");
+  const channel = getChannel();
 
   if (!channel) {
     return (
