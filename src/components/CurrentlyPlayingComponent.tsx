@@ -10,6 +10,7 @@ import {
   type Track,
 } from "../clients/currentlyPlayingClient.ts";
 import TrackComponent from "./TrackComponent.tsx";
+import { isMockMode, mockTrack } from "../mock.ts";
 
 const setChannelQueryParam = (channel: string) => {
   const url = new URL(window.location.href);
@@ -18,15 +19,26 @@ const setChannelQueryParam = (channel: string) => {
 };
 
 const CurrentlyPlayingComponent = () => {
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<Track>();
+  const mock = isMockMode();
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<Track | undefined>(
+    mock ? mockTrack : undefined,
+  );
 
   useEffect(() => {
+    if (mock) {
+      return;
+    }
+
     if (!localStorage.getItem("access_token")) {
       void requestAccessToken();
     }
-  }, []);
+  }, [mock]);
 
   useEffect(() => {
+    if (mock) {
+      return;
+    }
+
     async function checkAndRefreshToken() {
       try {
         const expiry = Number(localStorage.getItem("token_expiry") || 0);
@@ -64,9 +76,9 @@ const CurrentlyPlayingComponent = () => {
       clearInterval(tokenCheckInterval);
       clearInterval(pollInterval);
     };
-  }, []);
+  }, [mock]);
 
-  if (!localStorage.getItem("access_token")) {
+  if (!mock && !localStorage.getItem("access_token")) {
     return (
       <div className="container">
         <button onClick={requestAuth}>Log in</button>
