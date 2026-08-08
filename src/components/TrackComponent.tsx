@@ -1,6 +1,7 @@
 import Color from "color";
 import "./TrackComponent.css";
 import type { Track } from "../clients/currentlyPlayingClient.ts";
+import ProgressBarComponent from "./ProgressBarComponent.tsx";
 
 type TrackComponentProps = Track & {
   channel: string;
@@ -11,6 +12,10 @@ const TrackComponent = ({
   imageUrl,
   artists,
   channel,
+  progressMs,
+  durationMs,
+  isPlaying,
+  sampledAt,
 }: TrackComponentProps) => {
   const colorObj = Color(channel);
 
@@ -30,6 +35,13 @@ const TrackComponent = ({
         <h1>{name}</h1>
         <h2>{artists.join(", ")}</h2>
       </div>
+
+      <ProgressBarComponent
+        progressMs={progressMs}
+        durationMs={durationMs}
+        isPlaying={isPlaying}
+        sampledAt={sampledAt}
+      />
     </div>
   );
 };

@@ -3,11 +3,14 @@
   flex-direction: row;
   height: 100%;
 
+  position: relative;
+
   align-items: center;
 
   text-align: center;
 
-  padding: 1rem;
+  /* Extra bottom padding keeps content clear of the absolute progress bar. */
+  padding: 1rem 1rem 3.5rem;
   gap: 1rem;
 
   img {

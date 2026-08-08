@@ -1,11 +1,14 @@
 import { clearTokensAndForceReLogin } from "./authorization.ts";
 
 type CurrentlyPlayingResponse = {
+  is_playing: boolean;
+  progress_ms: number | null;
   item?: TrackResponse;
 };
 
 type TrackResponse = {
   name: string;
+  duration_ms: number;
   album: {
     images: ImageResponse[];
   };
@@ -24,6 +27,11 @@ export type Track = {
   name: string;
   imageUrl: string;
   artists: string[];
+  progressMs: number;
+  durationMs: number;
+  isPlaying: boolean;
+  /** Local clock when progressMs was read, so we can interpolate between polls. */
+  sampledAt: number;
 };
 
 export async function getCurrentlyPlaying(): Promise<Track | undefined> {
@@ -32,9 +40,9 @@ export async function getCurrentlyPlaying(): Promise<Track | undefined> {
   const response = await fetch(
     "https://api.spotify.com/v1/me/player/currently-playing",
     {
-    headers: {
-      Authorization: "Bearer " + accessToken,
-    },
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
     },
   );
 
@@ -51,7 +59,9 @@ export async function getCurrentlyPlaying(): Promise<Track | undefined> {
     return;
   }
 
-  const { item } = (await response.json()) as CurrentlyPlayingResponse;
+  const sampledAt = Date.now();
+  const { item, progress_ms, is_playing } =
+    (await response.json()) as CurrentlyPlayingResponse;
 
   if (!item) {
     return;
@@ -61,5 +71,9 @@ export async function getCurrentlyPlaying(): Promise<Track | undefined> {
     name: item.name,
     imageUrl: item.album.images[0].url,
     artists: item.artists.map(({ name }) => name),
+    progressMs: progress_ms ?? 0,
+    durationMs: item.duration_ms,
+    isPlaying: is_playing,
+    sampledAt,
   };
 }
